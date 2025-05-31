@@ -5,12 +5,102 @@
   <title>Ye Li</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
+      /* ─────────────────────────────────────────────────────────────────────────────
+       1) Reset the <body> background so that our custom .sun-background fills behind everything.
+       2) Make sure body is positioned and clipped so the rotating gradient never scrolls off‐screen.
+    ───────────────────────────────────────────────────────────────────────────── */
+    body {
+      position: relative;
+      overflow: hidden;
+      margin: 2rem;
+      font-family: Arial, sans-serif;
+      /* Remove the solid background here; it'll be provided by .sun-background */
+      background: none;
+      color: #333;
+    }
+
+    /* ─────────────────────────────────────────────────────────────────────────────
+       3) The rotating “sunshine” layer:
+         - fixed to cover the entire viewport (so it never shifts when you scroll).
+         - begins with a pale yellow base (#f5f5f5) plus semi‐transparent yellow rays.
+         - uses a repeating‐conic‐gradient to simulate sun rays every 10°.
+         - animates a full 360° rotation over 60 seconds, infinitely.
+         - sits behind all other content via z-index: -1.
+    ───────────────────────────────────────────────────────────────────────────── */
+    .sun-background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+
+      /* Light base color so that on the “non‐ray” portions, you see #f5f5f5 */
+      background-color: #f5f5f5;
+
+      /* 
+         repeating-conic‐gradient:
+           • From 0° to 5°: a semi‐transparent pale yellow (rgba(255,223,0,0.2))
+           • From 5° to 10°: fully transparent
+           Then it repeats every 10° → 360°.
+      */
+      background-image: repeating-conic-gradient(
+        rgba(255, 223, 0, 0.2) 0deg 5deg,
+        transparent 5deg 10deg
+      );
+
+      /* Animate a slow, smooth rotation so the rays “spin” continuously */
+      animation: rotate-sun 60s linear infinite;
+      z-index: -1;
+    }
+
+    /* 
+       4) Optional: a circular “sun” disc sitting behind the page’s header,
+       so you see a glowing orb plus radiating rays.
+       Adjust top/left/width/height as you prefer.
+    */
+    .sun {
+      position: fixed;
+      top: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 200px;
+      height: 200px;
+
+      /* radial gradient from bright center → fading out at edges */
+      background: radial-gradient(
+        circle,
+        #fffacd 0%,
+        #ffd700 70%,
+        rgba(255, 215, 0, 0) 80%
+      );
+      border-radius: 50%;
+      z-index: -1;
+      /* If you want the sun to pulse slightly, you could add an animation here. */
+    }
+
+    /* ─────────────────────────────────────────────────────────────────────────────
+       5) Keyframes to rotate the entire .sun-background container from 0° to 360°.
+    ───────────────────────────────────────────────────────────────────────────── */
+    @keyframes rotate-sun {
+      from {
+        transform: rotate(0deg);
+      }
+      to {
+        transform: rotate(360deg);
+      }
+    }  
+    
+
+    /* old code
     body {
       font-family: Arial, sans-serif;
       margin: 2rem;
       background-color: #f5f5f5;
       color: #333;
     }
+    */
+
+    
     h1 {
       color: #333;
     }
