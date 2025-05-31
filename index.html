@@ -6,76 +6,77 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <style>
- /* ──────────────────────────────────────────────────────────────────────────
-       1) Make html and body fill the viewport with no margin/padding.
-          This ensures .sunshine covers everything behind your content.
+    /* ──────────────────────────────────────────────────────────────────────────
+       1) Remove any default margin/padding so our glow can fill the viewport:
     ────────────────────────────────────────────────────────────────────────── */
     html,
     body {
       margin: 0;
       padding: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      background-color: #f5f5f5; /* pale-grey base */
-      position: relative;
+      min-height: 100vh;
+      background-color: #f5f5f5; /* pale‐grey base */
       font-family: Arial, sans-serif;
       color: #333;
     }
 
     /* ──────────────────────────────────────────────────────────────────────────
-       2) The “sunshine” <div>—full‐screen, fixed behind all content (z-index: -1).
-          We create a bright radial gradient centered off-screen in the northeast.
-          A high blur and moderate opacity make it look like natural light.
-          Then we animate it to drift slightly over time.
+       2) The .sunshine <div> sits fixed behind everything (z-index: -1). 
+          • We place a bright, blurred radial gradient centered near the 
+            northeast (90% across, 10% down). 
+          • Opacity is high (0.9) so you definitely see it. 
+          • A modest blur (80px) makes it look like soft sunlight. 
+          • We animate a small translate from (0,0) → (–50px, +50px) and back 
+            so the glow drifts gently. 
     ────────────────────────────────────────────────────────────────────────── */
     .sunshine {
       position: fixed;
       top: 0;
       left: 0;
-      width: 100vw;
-      height: 100vh;
+      width: 100%;
+      height: 100%;
       pointer-events: none;
       z-index: -1;
 
-      /*  
+      /* 
         radial-gradient(
-          circle at 80% 20% → center of the gradient lies near the NE corner
-          rgba(255, 240, 180, 0.5) at 0% → soft warm yellow at full strength
-          transparent at 60% → fades out by 60% of the radius
-        )
+          • “circle at 90% 10%” → the center of this gradient is at 90% (x) 
+            and 10% (y) of the <div>, i.e. near the upper‐right corner.
+          • rgba(255,200,50,0.9) from 0%→20% → a strong warm‐yellow core.
+          • transparent at 60% → fades out by 60% of the radius.
       */
       background: radial-gradient(
-        circle at 80% 20%,
-        rgba(255, 240, 180, 0.5) 0%,
+        circle at 90% 10%,
+        rgba(255, 200, 50, 0.9) 0%,
+        rgba(255, 200, 50, 0.9) 20%,
         transparent 60%
       );
 
-      /* Heavy blur so that the edges are never sharp */
-      filter: blur(120px);
+      /* Blur to soften edges—80px is quite strong but still lets you see the shape */
+      filter: blur(80px);
 
-      /* Animate “drifting” by shifting top/right from (0%,0%) → (–5%,–5%) → back */
-      animation: driftLight 25s ease-in-out infinite alternate;
+      /* 
+        Animate from translate(0, 0) → translate(-50px, 50px) over 10s, then alternate 
+        back. This makes the glow drift down‐and‐left slightly, then drift back up‐and‐right.
+      */
+      animation: drift 10s ease-in-out infinite alternate;
     }
 
-    @keyframes driftLight {
+    @keyframes drift {
+      from {
+        transform: translate(0px, 0px);
+      }
       to {
-        /* Move the gradient’s container up‐and‐left by 5% of viewport.
-           Because the radial’s center is defined in percentages (80% 20%),
-           changing “top/right” will make the whole glow shift naturally.
-        */
-        top: -5%;
-        left: -5%;
+        transform: translate(-50px, 50px);
       }
     }
 
     /* ──────────────────────────────────────────────────────────────────────────
-       3) Wrap your existing page content in .content so it has a 2rem margin
-          and sits above the <div class="sunshine"> (which is z-index: -1).
+       3) Put all your actual content inside .content so it sits above the glow. 
+          We keep your original margin: 2rem here.
     ────────────────────────────────────────────────────────────────────────── */
     .content {
       position: relative;
-      z-index: 0;       /* ensures content is on top of .sunshine */
+      z-index: 0;       /* ensures content is above .sunshine */
       margin: 2rem;
     }
 
