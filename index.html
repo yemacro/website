@@ -1,63 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Ye Li</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <style>
-      /* ─────────────────────────────────────────────────────────────────────────────
-       1) Reset the <body> background so that our custom .sun-background fills behind everything.
-       2) Make sure body is positioned and clipped so the rotating gradient never scrolls off‐screen.
+    /* ─────────────────────────────────────────────────────────────────────────────
+       1) Make html and body occupy the full viewport, with no default margin/padding,
+          so our animated background covers everything.
     ───────────────────────────────────────────────────────────────────────────── */
+    html,
     body {
-      position: relative;
-      overflow: hidden;
-      margin: 2rem;
-      font-family: Arial, sans-serif;
-      /* Remove the solid background here; it'll be provided by .sun-background */
-      background: none;
-      color: #333;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden; /* Prevent scrollbars from showing the “gap” around the gradient */
     }
 
     /* ─────────────────────────────────────────────────────────────────────────────
-       3) The rotating “sunshine” layer:
-         - fixed to cover the entire viewport (so it never shifts when you scroll).
-         - begins with a pale yellow base (#f5f5f5) plus semi‐transparent yellow rays.
-         - uses a repeating‐conic‐gradient to simulate sun rays every 10°.
-         - animates a full 360° rotation over 60 seconds, infinitely.
-         - sits behind all other content via z-index: -1.
+       2) Attach a rotating conic‐gradient to the <body> itself. This way no extra
+          “behind‐the‐body” div is needed, and you will immediately see the sunshine.
+       • background-color: #f5f5f5 is your pale‐grey base.
+       • repeating-conic-gradient(...) draws semi‐transparent yellow rays every 10°.
+       • animation “rotate-sun” does a 360° spin in 60s, repeating infinitely.
     ───────────────────────────────────────────────────────────────────────────── */
-    .sun-background {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-
-      /* Light base color so that on the “non‐ray” portions, you see #f5f5f5 */
+    body {
       background-color: #f5f5f5;
-
-      /* 
-         repeating-conic‐gradient:
-           • From 0° to 5°: a semi‐transparent pale yellow (rgba(255,223,0,0.2))
-           • From 5° to 10°: fully transparent
-           Then it repeats every 10° → 360°.
-      */
       background-image: repeating-conic-gradient(
         rgba(255, 223, 0, 0.2) 0deg 5deg,
         transparent 5deg 10deg
       );
-
-      /* Animate a slow, smooth rotation so the rays “spin” continuously */
       animation: rotate-sun 60s linear infinite;
-      z-index: -1;
     }
 
-    /* 
-       4) Optional: a circular “sun” disc sitting behind the page’s header,
-       so you see a glowing orb plus radiating rays.
-       Adjust top/left/width/height as you prefer.
-    */
+    /* ─────────────────────────────────────────────────────────────────────────────
+       3) Create a circular “sun” in the top center. It’s fixed, so it stays put
+          even if you scroll inside .content. You can adjust size/position as you like.
+    ───────────────────────────────────────────────────────────────────────────── */
     .sun {
       position: fixed;
       top: 10%;
@@ -65,8 +46,6 @@
       transform: translateX(-50%);
       width: 200px;
       height: 200px;
-
-      /* radial gradient from bright center → fading out at edges */
       background: radial-gradient(
         circle,
         #fffacd 0%,
@@ -74,13 +53,10 @@
         rgba(255, 215, 0, 0) 80%
       );
       border-radius: 50%;
-      z-index: -1;
-      /* If you want the sun to pulse slightly, you could add an animation here. */
+      pointer-events: none; /* So it never “captures” a click */
+      z-index: 0; /* Behind content but above the rotating gradient */
     }
 
-    /* ─────────────────────────────────────────────────────────────────────────────
-       5) Keyframes to rotate the entire .sun-background container from 0° to 360°.
-    ───────────────────────────────────────────────────────────────────────────── */
     @keyframes rotate-sun {
       from {
         transform: rotate(0deg);
@@ -88,19 +64,19 @@
       to {
         transform: rotate(360deg);
       }
-    }  
-    
+    }
 
-    /* old code
-    body {
-      font-family: Arial, sans-serif;
+    /* ─────────────────────────────────────────────────────────────────────────────
+       4) Your original content sits inside .content, which applies the 2rem margin
+          and ensures your text/buttons/paper list appear on top of the sun graphic.
+    ───────────────────────────────────────────────────────────────────────────── */
+    .content {
+      position: relative;
+      z-index: 1; /* Make sure all your text and links appear above the .sun */
       margin: 2rem;
-      background-color: #f5f5f5;
+      font-family: Arial, sans-serif;
       color: #333;
     }
-    */
-
-    
     h1 {
       color: #333;
     }
@@ -126,7 +102,7 @@
       background-color: #444;
     }
 
-     /* avocado‑green inline links */
+    /* avocado-green inline links */
     .paper-list a {
       color: #568203;
       text-decoration: none;
@@ -134,58 +110,66 @@
     .paper-list a:hover {
       text-decoration: underline;
     }
-
     .paper-list p {
       margin: 0.75rem 0;
       line-height: 1.4;
     }
   </style>
 </head>
+
 <body>
-  <h1>Ye Li</h1>
-  <p class="subline">U Washington</p>
-  <a href="cv.pdf" class="button" target="_blank">CV</a>
-  
-  <div class="paper-list">
-    <p>
-      Firm Quality Dynamics and the Slippery Slope of Credit Intervention, with Wenhao Li, forthcoming at the <em>Review of Economic Studies</em>, <a href="intervention_trap.pdf" target="_blank"><u>link</u></a>
-    </p>
-    <p>
-      Dynamic Banking and the Value of Deposits, with Patrick Bolton, Neng Wang, Jinqiang Yang, the <em>Journal of Finance</em> (2025), <a href="dynamic_bank.pdf" target="_blank"><u>link</u></a>
-    </p>
-    <p>
-      Fragile New Economy: Intangible Capital, Corporate Savings Glut, and Financial Instability, the <em>American Economic Review</em> (2025), <a href="fragile_new_economy.pdf" target="_blank"><u>link</u></a>
-    </p>
-    <p>
-      Network Risk and Key Players: A Structural Analysis of Interbank Liquidity, with Ed Denbee, Christian Julliard, Kathy Yuan, the <em>Journal of Financial Economics</em> (Lead Article) Volume 141, Issue 3 (2021), <a href="interbank_liquidity.pdf" target="_blank"><u>link</u></a>
-    </p>
-    <p>
-      Tokenomics: Dynamic Adoption and Valuation, with William Cong, Neng Wang, the <em>Review of Financial Studies</em> (Editor's Choice) Volume 34 Issue 3 (2021), <a href="tokenomics.pdf" target="_blank"><u>link</u></a>
-    </p>
-    <p>
-      Token-based Platform Finance, with William Cong, Neng Wang, the <em>Journal of Financial Economics</em> (2022), <a href="token_finance.pdf" target="_blank"><u>link</u></a>
-    </p>
-    <p>
-      Public Liquidity and Intermediated Liquidity, revise and resubmit the <em>Journal of Finance</em> (2022), <a href="intermediated_liquidity_cycle.pdf" target="_blank"><u>link</u></a>
-    </p>
-    <p>
-      Information-Concealing Credit Architecture, with Gary Gorton, Guillermo Ordo&ntildeez (2025), <a href="info_concealing_chain.pdf" target="_blank"><u>link</u></a>
-    </p>
-    <p>
-      Data as a Networked Asset, with Bo Bian, Qiushi Huang, Huan Tang (2024), <a href="data_value.pdf" target="_blank"><u>link</u></a>
-    </p>
-    <p>
-      Slicing an Asset to Learn about Its Future: A New Perspective on Return and Cash-Flow, with Chen Wang (2024), <a href="slicing_for_forecasting.pdf" target="_blank"><u>link</u></a>
-    </p>
-    <p>
-      The Network Structure of Money Multiplier, with Yi Li, Huijun Sun (2023), <a href="payment_network_multiplier.pdf" target="_blank"><u>link</u></a>
-    </p>
-    <p>
-      Payment Risk and Bank Lending: Reassessing the Bundling of Payment Services and Credit, with Yi Li (2022), <a href="payment_risk.pdf" target="_blank"><u>link</u></a>
-    </p>
-    <p>
-      Money Creation in Decentralized Finance: A Dynamic Model of Stablecoin and Crypto Shadow Banking, with Simon Mayer (2022), <a href="stablecoin.pdf" target="_blank"><u>link</u></a>
-    </p>
-  </div>  
+  <!-- ─────────────────────────────────────────────────────────────────────────────
+       5) The rotating gradient is now the body’s background. Above it, place
+          a fixed “sun” circle, then your page content inside .content.
+    ───────────────────────────────────────────────────────────────────────────── -->
+  <div class="sun"></div>
+
+  <div class="content">
+    <h1>Ye Li</h1>
+    <p class="subline">U Washington</p>
+    <a href="cv.pdf" class="button" target="_blank">CV</a>
+
+    <div class="paper-list">
+      <p>
+        Firm Quality Dynamics and the Slippery Slope of Credit Intervention, with Wenhao Li, forthcoming at the <em>Review of Economic Studies</em>, <a href="intervention_trap.pdf" target="_blank"><u>link</u></a>
+      </p>
+      <p>
+        Dynamic Banking and the Value of Deposits, with Patrick Bolton, Neng Wang, Jinqiang Yang, the <em>Journal of Finance</em> (2025), <a href="dynamic_bank.pdf" target="_blank"><u>link</u></a>
+      </p>
+      <p>
+        Fragile New Economy: Intangible Capital, Corporate Savings Glut, and Financial Instability, the <em>American Economic Review</em> (2025), <a href="fragile_new_economy.pdf" target="_blank"><u>link</u></a>
+      </p>
+      <p>
+        Network Risk and Key Players: A Structural Analysis of Interbank Liquidity, with Ed Denbee, Christian Julliard, Kathy Yuan, the <em>Journal of Financial Economics</em> (Lead Article) Volume 141, Issue 3 (2021), <a href="interbank_liquidity.pdf" target="_blank"><u>link</u></a>
+      </p>
+      <p>
+        Tokenomics: Dynamic Adoption and Valuation, with William Cong, Neng Wang, the <em>Review of Financial Studies</em> (Editor's Choice) Volume 34 Issue 3 (2021), <a href="tokenomics.pdf" target="_blank"><u>link</u></a>
+      </p>
+      <p>
+        Token-based Platform Finance, with William Cong, Neng Wang, the <em>Journal of Financial Economics</em> (2022), <a href="token_finance.pdf" target="_blank"><u>link</u></a>
+      </p>
+      <p>
+        Public Liquidity and Intermediated Liquidity, revise and resubmit the <em>Journal of Finance</em> (2022), <a href="intermediated_liquidity_cycle.pdf" target="_blank"><u>link</u></a>
+      </p>
+      <p>
+        Information-Concealing Credit Architecture, with Gary Gorton, Guillermo Ordo&ntilde;ez (2025), <a href="info_concealing_chain.pdf" target="_blank"><u>link</u></a>
+      </p>
+      <p>
+        Data as a Networked Asset, with Bo Bian, Qiushi Huang, Huan Tang (2024), <a href="data_value.pdf" target="_blank"><u>link</u></a>
+      </p>
+      <p>
+        Slicing an Asset to Learn about Its Future: A New Perspective on Return and Cash-Flow, with Chen Wang (2024), <a href="slicing_for_forecasting.pdf" target="_blank"><u>link</u></a>
+      </p>
+      <p>
+        The Network Structure of Money Multiplier, with Yi Li, Huijun Sun (2023), <a href="payment_network_multiplier.pdf" target="_blank"><u>link</u></a>
+      </p>
+      <p>
+        Payment Risk and Bank Lending: Reassessing the Bundling of Payment Services and Credit, with Yi Li (2022), <a href="payment_risk.pdf" target="_blank"><u>link</u></a>
+      </p>
+      <p>
+        Money Creation in Decentralized Finance: A Dynamic Model of Stablecoin and Crypto Shadow Banking, with Simon Mayer (2022), <a href="stablecoin.pdf" target="_blank"><u>link</u></a>
+      </p>
+    </div>
+  </div>
 </body>
 </html>
